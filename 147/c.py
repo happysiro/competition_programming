@@ -1,18 +1,21 @@
 N = int(input())
-A = [0]*20
-x = [[] for i in range(20)]
-y = [[] for i in range(20)]
+testimony = [[] for _ in range(N)]
 
-for i in range(1, N+1):
-    A[i] = int(input())
-    for j in range(A[i]):
-        tmp = input().split()
-        x[i].append(int(tmp[0]))
-        y[i].append(int(tmp[1]))
+for i in range(N):
+    A = int(input())
+    for j in range(A):
+        person, state = map(int, input().split())
+        testimony[i].append([person-1, state])
 
-for bits in range(1, 1 << N+1):
-    print(bits & (1 << (i-1)))
-
-print(A)
-print(x)
-print(y)
+honest = 0
+for i in range(1, 2**N):
+    flag = 0
+    for j in range(N):
+        if (i >> j) & 1 == 1:  # j番目は正直と仮定
+            for x, y in testimony[j]:
+                if (i >> x) & 1 != y:  # j番目は正直だが矛盾を発見
+                    flag = 1
+                    break
+    if flag == 0:  # 矛盾がある場合はflag == 1になる
+        honest = max(honest, bin(i)[2:].count('1'))  # 1の数をカウントし最大となるものを選択
+print(honest)
